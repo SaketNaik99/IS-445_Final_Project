@@ -98,19 +98,22 @@ def arrests_by_race(data):
 
 
 def plot_fig3(data):
-    data_3= data.groupby(['arrest_type_descp','crime_code_desc'])['arrest_code'].count().to_frame('no_of_arrests').reset_index()
+    data_3 = data.groupby(['arrest_type_descp', 'crime_code_desc'])['arrest_code'].count().to_frame('no_of_arrests').\
+        reset_index()
     fig = px.bar(data_3, x="crime_code_desc", y="no_of_arrests", color = 'arrest_type_descp')
     return fig
 
 
 def plot_fig2(data):
-    data_2= data.groupby(['crime_code_desc','arrest_res'])['arrest_code'].count().to_frame('no_of_arrests').reset_index()
+    data_2 = data.groupby(['crime_code_desc','arrest_res'])['arrest_code'].count().to_frame('no_of_arrests').\
+        reset_index()
     fig = px.bar(data_2, x="crime_code_desc", y="no_of_arrests", color = 'arrest_res')
     return fig
 
 
 def plot_fig1(data):
-    data_1 = data.groupby(['crime_code_desc','age_group'])['arrest_code'].count().to_frame('no_of_arrests').reset_index()
+    data_1 = data.groupby(['crime_code_desc','age_group'])['arrest_code'].count().to_frame('no_of_arrests').\
+        reset_index()
     fig = px.bar(data_1, x="crime_code_desc", y="no_of_arrests", color = 'age_group')
     return fig
 
@@ -259,22 +262,20 @@ def dash_layout():
             dcc.Graph(id='line_plot', figure=cat2_arrests(data))
         ]),
         ([
-            html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
-                                                                                 'marginTop': 40,
-                                                                                 'marginBottom': 40}),
-            dcc.Graph(id='line_plot', figure=plot_fig1(data))
+            html.H1(id='H1', children='Crimes Commited by Different Age Groups', style={'textAlign': 'center',
+                                                                                        'marginTop': 40,
+                                                                                        'marginBottom': 40}),
+            dcc.Graph(id='bar_chart', figure=plot_fig1(), style={'width': 1500, 'height': 1000})
         ]),
         ([
-            html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
-                                                                                 'marginTop': 40,
-                                                                                 'marginBottom': 40}),
-            dcc.Graph(id='line_plot', figure=plot_fig2(data))
+            html.H1(id='H2', children='Punshiment for Crime Commited', style={'textAlign': 'center',
+                                                                              'marginTop': 40, 'marginBottom': 40}),
+            dcc.Graph(id='bar_chart', figure=plot_fig2(), style={'width': 1500, 'height': 1000})
         ]),
         ([
-            html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
-                                                                                 'marginTop': 40,
-                                                                                 'marginBottom': 40}),
-            dcc.Graph(id='line_plot', figure=plot_fig3(data))
+            html.H1(id='H3', children='Method of Arresting the Suspect', style={'textAlign': 'center',
+                                                                                'marginTop': 40, 'marginBottom': 40}),
+            dcc.Graph(id='bar_chart', figure=plot_fig3(), style={'width': 1500, 'height': 1000})
         ])
     ]
     )
