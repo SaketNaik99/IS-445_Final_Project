@@ -97,6 +97,24 @@ def arrests_by_race(data):
     return fig5
 
 
+def plot_fig3(data):
+    data_3= data.groupby(['arrest_type_descp','crime_code_desc'])['arrest_code'].count().to_frame('no_of_arrests').reset_index()
+    fig = px.bar(data_3, x="crime_code_desc", y="no_of_arrests", color = 'arrest_type_descp')
+    return fig
+
+
+def plot_fig2(data):
+    data_2= data.groupby(['crime_code_desc','arrest_res'])['arrest_code'].count().to_frame('no_of_arrests').reset_index()
+    fig = px.bar(data_2, x="crime_code_desc", y="no_of_arrests", color = 'arrest_res')
+    return fig
+
+
+def plot_fig1(data):
+    data_1 = data.groupby(['crime_code_desc','age_group'])['arrest_code'].count().to_frame('no_of_arrests').reset_index()
+    fig = px.bar(data_1, x="crime_code_desc", y="no_of_arrests", color = 'age_group')
+    return fig
+
+
 def get_data():
     response = requests.get('https://data.urbanaillinois.us/resource/afbd-8beq.json?$limit=50000').json()
     arrest_code = []
@@ -239,6 +257,24 @@ def dash_layout():
                                                                                  'marginTop': 40,
                                                                                  'marginBottom': 40}),
             dcc.Graph(id='line_plot', figure=cat2_arrests(data))
+        ]),
+        ([
+            html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
+                                                                                 'marginTop': 40,
+                                                                                 'marginBottom': 40}),
+            dcc.Graph(id='line_plot', figure=plot_fig1(data))
+        ]),
+        ([
+            html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
+                                                                                 'marginTop': 40,
+                                                                                 'marginBottom': 40}),
+            dcc.Graph(id='line_plot', figure=plot_fig2(data))
+        ]),
+        ([
+            html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
+                                                                                 'marginTop': 40,
+                                                                                 'marginBottom': 40}),
+            dcc.Graph(id='line_plot', figure=plot_fig3(data))
         ])
     ]
     )
