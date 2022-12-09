@@ -3,6 +3,7 @@ import dash_html_components as html
 import dash_core_components as dcc
 import plotly.express as px
 import pandas as pd
+import requests
 
 app = dash.Dash()
 
@@ -96,15 +97,151 @@ def arrests_by_race(data):
     return fig5
 
 
+def get_data():
+    response = requests.get('https://data.urbanaillinois.us/resource/afbd-8beq.json?$limit=50000').json()
+    arrest_code = []
+    incident_number = []
+    date_of_arrest = []
+    year_of_arrest = []
+    month_of_arrest = []
+    arrest_type_descp = []
+    crime_code = []
+    crime_code_desc = []
+    crime_category_code = []
+    crime_category_desc = []
+    violation = []
+    disposition_code = []
+    disposition_desc = []
+    age_at_arrest = []
+    arrestee_sex = []
+    arrestee_race = []
+    arrestee_emp_desc = []
+    arrestee_residency_desc = []
+    arrestee_home_zip = []
+    arrestee_home_city = []
+    arrestee_home_state = []
+    arrest_res = []
+
+    for i in response:
+        arrest_code.append(i['arrest_code'])
+        incident_number.append(i['incident_number'])
+        date_of_arrest.append(i['date_of_arrest'])
+        year_of_arrest.append(i['year_of_arrest'])
+        month_of_arrest.append(i['month_of_arrest'])
+        try:
+            arrest_type_descp.append(i['arrest_type_description'])
+        except:
+            arrest_type_descp.append(None)
+        crime_code.append(i['crime_code'])
+        crime_code_desc.append(i['crime_code_description'])
+        violation.append(i['violation'])
+        disposition_code.append(i['disposition_code'])
+        age_at_arrest.append(i['age_at_arrest'])
+        try:
+            arrestee_sex.append(i['arrestee_race'])
+        except:
+            arrestee_sex.append(None)
+        try:
+            arrestee_race.append(i['arrestee_sex'])
+        except:
+            arrestee_race.append(None)
+        try:
+            arrestee_emp_desc.append(i['arrestee_employment_description'])
+        except:
+            arrestee_emp_desc.append(None)
+        try:
+            arrestee_residency_desc.append(i['arrestee_residency_description'])
+        except:
+            arrestee_residency_desc.append(None)
+        try:
+            arrestee_home_zip.append(i['arrestee_home_zip'])
+        except:
+            arrestee_home_zip.append(None)
+        try:
+            arrestee_home_city.append(i['arrestee_home_city'])
+        except:
+            arrestee_home_city.append(None)
+        try:
+            arrestee_home_state.append(i['arrestee_home_state'])
+        except:
+            arrestee_home_state.append(None)
+        arrest_res.append(i['arrest_resolution'])
+
+        d = {'arrest_code': arrest_code, 'incident_number': incident_number, 'date_of_arrest': date_of_arrest,
+             'year_of_arrest': year_of_arrest,
+             'year_of_arrest': year_of_arrest, 'month_of_arrest': month_of_arrest,
+             'arrest_type_descp': arrest_type_descp, 'crime_code': crime_code,
+             'crime_code_desc': crime_code_desc, 'violation': violation, 'disposition_code': disposition_code,
+             'age_at_arrest': age_at_arrest,
+             'arrestee_sex': arrestee_sex, 'arrestee_race': arrestee_race, 'arrestee_emp_desc': arrestee_emp_desc,
+             'arrestee_residency_desc': arrestee_residency_desc,
+             'arrestee_home_zip': arrestee_home_zip, 'arrestee_home_city': arrestee_home_city,
+             'arrestee_home_state': arrestee_home_state, 'arrest_res': arrest_res}
+    data = pd.DataFrame(d)
+    return data
+
+
 def dash_layout():
-    app.layout = html.Div(children=[
+    data = get_data()
+    app.layout = html.Div(children=
+    [
         html.Div
-            ([
+        ([
             html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
-                                                                                 'marginTop': 40, 'marginBottom': 40}),
-            dcc.Graph(id='line_plot', figure=yearwise_arrests())
+                                                                                 'marginTop': 40,
+                                                                                 'marginBottom': 40}),
+            dcc.Graph(id='line_plot', figure=yearwise_arrests(data))
+        ]),
+        ([
+            html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
+                                                                                 'marginTop': 40,
+                                                                                 'marginBottom': 40}),
+            dcc.Graph(id='line_plot', figure=case_res(data))
+        ]),
+        ([
+            html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
+                                                                                 'marginTop': 40,
+                                                                                 'marginBottom': 40}),
+            dcc.Graph(id='line_plot', figure=arrest_types(data))
+        ]),
+        ([
+            html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
+                                                                                 'marginTop': 40,
+                                                                                 'marginBottom': 40}),
+            dcc.Graph(id='line_plot', figure=age_plot(data))
+        ]),
+        ([
+            html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
+                                                                                 'marginTop': 40,
+                                                                                 'marginBottom': 40}),
+            dcc.Graph(id='line_plot', figure=monthly_arrests(data))
+        ]),
+        ([
+            html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
+                                                                                 'marginTop': 40,
+                                                                                 'marginBottom': 40}),
+            dcc.Graph(id='line_plot', figure=arrests_by_race(data))
+        ]),
+        ([
+            html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
+                                                                                 'marginTop': 40,
+                                                                                 'marginBottom': 40}),
+            dcc.Graph(id='line_plot', figure=arrests_by_sex(data))
+        ]),
+        ([
+            html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
+                                                                                 'marginTop': 40,
+                                                                                 'marginBottom': 40}),
+            dcc.Graph(id='line_plot', figure=cat1_arrests(data))
+        ]),
+        ([
+            html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
+                                                                                 'marginTop': 40,
+                                                                                 'marginBottom': 40}),
+            dcc.Graph(id='line_plot', figure=cat2_arrests(data))
         ])
-    ])
+    ]
+    )
 
 
 if __name__ == '__main__':
