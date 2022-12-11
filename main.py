@@ -1,6 +1,6 @@
 import dash
-import dash_html_components as html
-import dash_core_components as dcc
+from dash import html
+from dash import dcc
 import plotly.express as px
 import pandas as pd
 import requests
@@ -98,23 +98,23 @@ def arrests_by_race(data):
 
 
 def plot_fig3(data):
-    data_3 = data.groupby(['arrest_type_descp', 'crime_code_desc'])['arrest_code'].count().to_frame('no_of_arrests').\
+    data_3 = data.groupby(['arrest_type_descp', 'crime_code_desc'])['arrest_code'].count().to_frame('no_of_arrests'). \
         reset_index()
-    fig = px.bar(data_3, x="crime_code_desc", y="no_of_arrests", color = 'arrest_type_descp')
+    fig = px.bar(data_3, x="crime_code_desc", y="no_of_arrests", color='arrest_type_descp')
     return fig
 
 
 def plot_fig2(data):
-    data_2 = data.groupby(['crime_code_desc','arrest_res'])['arrest_code'].count().to_frame('no_of_arrests').\
+    data_2 = data.groupby(['crime_code_desc', 'arrest_res'])['arrest_code'].count().to_frame('no_of_arrests'). \
         reset_index()
-    fig = px.bar(data_2, x="crime_code_desc", y="no_of_arrests", color = 'arrest_res')
+    fig = px.bar(data_2, x="crime_code_desc", y="no_of_arrests", color='arrest_res')
     return fig
 
 
 def plot_fig1(data):
-    data_1 = data.groupby(['crime_code_desc','age_group'])['arrest_code'].count().to_frame('no_of_arrests').\
+    data_1 = data.groupby(['crime_code_desc', 'age_group'])['arrest_code'].count().to_frame('no_of_arrests'). \
         reset_index()
-    fig = px.bar(data_1, x="crime_code_desc", y="no_of_arrests", color = 'age_group')
+    fig = px.bar(data_1, x="crime_code_desc", y="no_of_arrests", color='age_group')
     return fig
 
 
@@ -202,12 +202,57 @@ def get_data():
     return data
 
 
+def city_sex(data):
+    fig = px.histogram(data, x=data['arrestee_home_city'],
+                       y=data['arrestee_home_city'].index,
+                       color=data['arrestee_sex'],
+                       animation_frame=data['year_of_arrest'],
+                       log_y=True,
+                       title='Relationship Between Offender Home City and Sex',
+                       labels={'arrestee_home_city': 'Offender Home City', })
+    return fig
+
+
+def city_age(data):
+    fig = px.histogram(data, x=data['arrestee_home_city'],
+                       y=data['arrestee_home_city'].index,
+                       color=data['AgeGroup'],
+                       animation_frame=data['year_of_arrest'],
+                       log_y=True,
+                       title='Relationship Between Offender Home City and Age',
+                       labels={'arrestee_home_city': 'Offender Home City'})
+    return fig
+
+
+def city_crime_type(data):
+    fig = px.histogram(data, x=data['arrestee_home_city'],
+                       y=data['arrestee_home_city'].index,
+                       color=data['crime_code_desc'],
+                       animation_frame=data['year_of_arrest'],
+                       log_y=True,
+                       title='Relationship Between Offender Home City and Crime Types',
+                       labels={'arrestee_home_city': 'Offender Home City',
+                               'arrestee_race': 'Offender Race'})
+    return fig
+
+
+def city_race(data):
+    fig = px.histogram(data, x=data['arrestee_home_city'],
+                       y=data['arrestee_home_city'].index,
+                       color=data['arrestee_race'],
+                       animation_frame=data['year_of_arrest'],
+                       log_y=True,
+                       title='Relationship Between Offender Home City and Race',
+                       labels={'arrestee_home_city': 'Offender Home City', })
+    return fig
+
+
 def dash_layout():
     data = get_data()
     app.layout = html.Div(children=
     [
         html.Div
-        ([
+            ([
             html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
                                                                                  'marginTop': 40,
                                                                                  'marginBottom': 40}),
@@ -229,7 +274,7 @@ def dash_layout():
             html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
                                                                                  'marginTop': 40,
                                                                                  'marginBottom': 40}),
-            dcc.Graph(id='line_plot', figure=age_plot(data))
+            dcc.Graph(id='line_plot', figure=arrest_types(data))
         ]),
         ([
             html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
@@ -276,10 +321,31 @@ def dash_layout():
             html.H1(id='H3', children='Method of Arresting the Suspect', style={'textAlign': 'center',
                                                                                 'marginTop': 40, 'marginBottom': 40}),
             dcc.Graph(id='bar_chart', figure=plot_fig3(), style={'width': 1500, 'height': 1000})
+        ]),
+        ([
+            html.H1(id='H3', children='Method of Arresting the Suspect', style={'textAlign': 'center',
+                                                                                'marginTop': 40, 'marginBottom': 40}),
+            dcc.Graph(id='bar_chart', figure=city_sex(data), style={'width': 1500, 'height': 1000})
+        ]),
+        ([
+            html.H1(id='H3', children='Method of Arresting the Suspect', style={'textAlign': 'center',
+                                                                                'marginTop': 40, 'marginBottom': 40}),
+            dcc.Graph(id='bar_chart', figure=city_race(data), style={'width': 1500, 'height': 1000})
+        ]),
+        ([
+            html.H1(id='H3', children='Method of Arresting the Suspect', style={'textAlign': 'center',
+                                                                                'marginTop': 40, 'marginBottom': 40}),
+            dcc.Graph(id='bar_chart', figure=city_age(data), style={'width': 1500, 'height': 1000})
+        ]),
+        ([
+            html.H1(id='H3', children='Method of Arresting the Suspect', style={'textAlign': 'center',
+                                                                                'marginTop': 40, 'marginBottom': 40}),
+            dcc.Graph(id='bar_chart', figure=city_crime_type(data), style={'width': 1500, 'height': 1000})
         ])
     ]
     )
 
 
 if __name__ == '__main__':
+    dash_layout()
     app.run_server(debug=False)
