@@ -26,7 +26,7 @@ def case_res(data):
     fig = px.line(plot_data,
                   x="arrest_res", y="arrest_code_grouped",
                   title='Yearwise arrests trend',
-                  labels={"year_of_arrest": "Year of Arrest", "arrest_code": "Number of Offenders"}
+                  labels={"arrest_res": "Arrest Resolution", "arrest_code": "Number of Offenders"}
                   )
     return fig
 
@@ -256,19 +256,13 @@ def dash_layout():
             html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
                                                                                  'marginTop': 40,
                                                                                  'marginBottom': 40}),
-            dcc.Graph(id='line_plot', figure=yearwise_arrests(data))
+            dcc.Graph(id='yearwise_arrests_plot', figure=yearwise_arrests(data))
         ]),
         ([
-            html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
+            html.H1(id='H1', children='Number of Offenders for each arrest resolution', style={'textAlign': 'center',
                                                                                  'marginTop': 40,
                                                                                  'marginBottom': 40}),
-            dcc.Graph(id='line_plot', figure=case_res(data))
-        ]),
-        ([
-            html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
-                                                                                 'marginTop': 40,
-                                                                                 'marginBottom': 40}),
-            dcc.Graph(id='line_plot', figure=arrest_types(data))
+            dcc.Graph(id='arrest_res_plot', figure=case_res(data))
         ]),
         ([
             html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
@@ -280,28 +274,33 @@ def dash_layout():
             html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
                                                                                  'marginTop': 40,
                                                                                  'marginBottom': 40}),
+            dcc.Graph(id='line_plot', figure=arrest_types(data))
+        ]),
+        ([
+            html.H1(id='H1', children='Trend of number of offenders per year based on Arrest type',
+                    style={'textAlign': 'center', 'marginTop': 40, 'marginBottom': 40}),
             dcc.Graph(id='line_plot', figure=monthly_arrests(data))
         ]),
         ([
-            html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
+            html.H1(id='H1', children='Number of Arrests by race', style={'textAlign': 'center',
                                                                                  'marginTop': 40,
                                                                                  'marginBottom': 40}),
             dcc.Graph(id='line_plot', figure=arrests_by_race(data))
         ]),
         ([
-            html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
+            html.H1(id='H1', children='Number of Arrests by sex', style={'textAlign': 'center',
                                                                                  'marginTop': 40,
                                                                                  'marginBottom': 40}),
             dcc.Graph(id='line_plot', figure=arrests_by_sex(data))
         ]),
         ([
-            html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
+            html.H1(id='H1', children='Number of Juvenile/Non-Juvenile Arrests', style={'textAlign': 'center',
                                                                                  'marginTop': 40,
                                                                                  'marginBottom': 40}),
             dcc.Graph(id='line_plot', figure=cat1_arrests(data))
         ]),
         ([
-            html.H1(id='H1', children='Number of Arrests made each year', style={'textAlign': 'center',
+            html.H1(id='H1', children='Number of Arrests in each Age Group', style={'textAlign': 'center',
                                                                                  'marginTop': 40,
                                                                                  'marginBottom': 40}),
             dcc.Graph(id='line_plot', figure=cat2_arrests(data))
@@ -323,23 +322,23 @@ def dash_layout():
             dcc.Graph(id='bar_chart', figure=plot_fig3(), style={'width': 1500, 'height': 1000})
         ]),
         ([
-            html.H1(id='H3', children='Method of Arresting the Suspect', style={'textAlign': 'center',
+            html.H1(id='H3', children='Relationship Between Offender Home City and Sex', style={'textAlign': 'center',
                                                                                 'marginTop': 40, 'marginBottom': 40}),
             dcc.Graph(id='bar_chart', figure=city_sex(data), style={'width': 1500, 'height': 1000})
         ]),
         ([
-            html.H1(id='H3', children='Method of Arresting the Suspect', style={'textAlign': 'center',
-                                                                                'marginTop': 40, 'marginBottom': 40}),
+            html.H1(id='H3', children='Relationship Between Offender Home City and Race',
+                    style={'textAlign': 'center', 'marginTop': 40, 'marginBottom': 40}),
             dcc.Graph(id='bar_chart', figure=city_race(data), style={'width': 1500, 'height': 1000})
         ]),
         ([
-            html.H1(id='H3', children='Method of Arresting the Suspect', style={'textAlign': 'center',
+            html.H1(id='H3', children='Relationship Between Offender Home City and Age', style={'textAlign': 'center',
                                                                                 'marginTop': 40, 'marginBottom': 40}),
             dcc.Graph(id='bar_chart', figure=city_age(data), style={'width': 1500, 'height': 1000})
         ]),
         ([
-            html.H1(id='H3', children='Method of Arresting the Suspect', style={'textAlign': 'center',
-                                                                                'marginTop': 40, 'marginBottom': 40}),
+            html.H1(id='H3', children='Relationship Between Offender Home City and Crime Types',
+                    style={'textAlign': 'center', 'marginTop': 40, 'marginBottom': 40}),
             dcc.Graph(id='bar_chart', figure=city_crime_type(data), style={'width': 1500, 'height': 1000})
         ])
     ]
