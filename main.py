@@ -247,6 +247,80 @@ def city_race(data):
     return fig
 
 
+def preprocess(dataframe):
+
+  df1 = data.copy()
+
+  # convert year to datetime and drop month
+  df1['year_of_arrest'] = pd.to_datetime(df1['year_of_arrest'], format='%Y')
+  df1.drop(columns='month_of_arrest',inplace=True)
+
+  # Creating Age Category Column
+  bins= [0,18,24,34,54,74, 84, 100]
+  labels = ['0 to 18','18 to 24','24 to 34','34 to 54','54 to 74','74 to 84',"84 to 100"]
+  df1['Arreste Age Category'] = pd. cut(df1['age_at_arrest'], bins=bins, labels=labels, right=False)
+
+  return df1
+
+
+def age_crimetype(dataframe):
+
+  import plotly.graph_objects as go
+
+  age_crimetype_df = data[["age_at_arrest", "crime_code_desc", "arrestee_sex"]]
+  age_crimetype_df = pd.DataFrame(age_crimetype_df.groupby("crime_code_desc")["age_at_arrest"].mean())
+  age_crimetype_df.reset_index(inplace = True)
+  age_crimetype_df = age_crimetype_df[age_crimetype_df["crime_code_desc"] !="."]
+  age_crimetype_df
+  age_crimetype_df.sort_values(by = "age_at_arrest", ascending = True, inplace=True )
+  age_crimetype_df["age_at_arrest"] = age_crimetype_df["age_at_arrest"].astype("int")
+
+  fig = go.Figure()
+  fig.add_trace(go.Bar(
+      y=age_crimetype_df["crime_code_desc"],
+      x=age_crimetype_df["age_at_arrest"],
+      name='Age at Arrest',
+      orientation='h',
+      marker=dict(
+          color='rgba(246, 78, 139, 0.6)',
+          line=dict(color='rgba(246, 78, 139, 1.0)', width=3)
+      )
+  ))
+
+  fig.update_layout(
+  title_text="Crime Type VS Mean Age at Arrest",
+  uniformtext=dict(mode="hide", minsize=10),
+  xaxis_title = "Mean Age at Arrest",
+  yaxis_title = "Crime Type ")
+
+  fig.update_layout(barmode='stack')
+  return fig
+
+
+def age_crimecount(dataframe):
+  age_minor_df = pd.DataFrame(dataframe.groupby("Arreste Age Category")["Arreste Age Category"].count())
+  age_minor_df.rename(columns = {"Arreste Age Category": "Count"}, inplace = True)
+  age_minor_df.reset_index(inplace = True)
+
+  fig = px.bar(age_minor_df, x="Arreste Age Category", y="Count", title="Number of Arrest made for different age category")
+  return fig
+
+
+def age_resolution(dataframe):
+
+  age_resolution_df = pd.DataFrame(dataframe.groupby(["arrest_res","Arreste Age Category"])["Arreste Age Category"].count())
+  age_resolution_df.rename(columns = {"Arreste Age Category": "Count"}, inplace = True)
+  age_resolution_df.reset_index(inplace = True)
+  
+  fig = px.bar(age_resolution_df, x='arrest_res', y='Count',
+              color='Arreste Age Category',
+             labels={'Count':'Number of People Arrested', 'arrest_res': 'Resolution at Arrest'}, height=1000, title = "Count of People arrested vs Arrest Resolution")
+
+
+  return fig
+
+
+
 def dash_layout():
     data = get_data()
     app.layout = html.Div(children=
