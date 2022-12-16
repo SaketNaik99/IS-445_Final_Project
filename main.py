@@ -202,49 +202,56 @@ def get_data():
     return data
 
 
-def city_sex(data):
-    fig = px.histogram(data, x=data['arrestee_home_city'],
-                       y=data['arrestee_home_city'].index,
-                       color=data['arrestee_sex'],
-                       animation_frame=data['year_of_arrest'],
-                       log_y=True,
-                       title='Relationship Between Offender Home City and Sex',
-                       labels={'arrestee_home_city': 'Offender Home City', })
-    return fig
+def city_sex():
+  data['year_of_arrest'] = data['year_of_arrest'].astype('int32')
+  data['month_of_arrest'] = pd.to_datetime(data['month_of_arrest'], format='%m')
+  data['date_of_arrest'] = pd.to_datetime(data['date_of_arrest'])
+  data_only_sex = data[(data['arrestee_sex'] == 'MALE') | (data['arrestee_sex'] == 'FEMALE')]
+  fig = px.histogram(data_only_sex, x = data_only_sex['arrestee_home_city'],
+                     y = data_only_sex['arrestee_home_city'].index,
+                     color = data_only_sex['arrestee_sex'],
+                     animation_frame=data_only_sex['year_of_arrest'],
+                     log_y = True,
+                     title = 'Relationship Between Offender Home City and Sex',
+                     labels = {'arrestee_home_city' : 'Offender Home City'})
+  return fig
 
 
-def city_age(data):
-    fig = px.histogram(data, x=data['arrestee_home_city'],
-                       y=data['arrestee_home_city'].index,
-                       color=data['AgeGroup'],
-                       animation_frame=data['year_of_arrest'],
-                       log_y=True,
-                       title='Relationship Between Offender Home City and Age',
-                       labels={'arrestee_home_city': 'Offender Home City'})
-    return fig
+def city_age():
+  data['age_at_arrest'] = data['age_at_arrest'].astype(float)
+  bins= [0,13,20,50,110]
+  labels = ['Kid','Teen','Adult','Elder']
+  data['AgeGroup'] = pd.cut(data['age_at_arrest'], bins=bins, labels=labels, right=False)
+  fig = px.histogram(data, x = data['arrestee_home_city'],
+                     y = data['arrestee_home_city'].index,
+                     color = data['AgeGroup'],
+                     animation_frame=data['year_of_arrest'],
+                     log_y = True,
+                     title = 'Relationship Between Offender Home City and Age',
+                     labels = {'arrestee_home_city' : 'Offender Home City'})
+  return fig
+
+def city_crime_type():
+  fig = px.histogram(data, x = data['arrestee_home_city'],
+                     y = data['arrestee_home_city'].index,
+                     color = data['crime_code_desc'],
+                     animation_frame=data['year_of_arrest'],
+                     log_y = True,
+                     title = 'Relationship Between Offender Home City and Crime Types',
+                     labels = {'arrestee_home_city' : 'Offender Home City',
+                               'arrestee_race' : 'Offender Race'})
+  return fig
 
 
-def city_crime_type(data):
-    fig = px.histogram(data, x=data['arrestee_home_city'],
-                       y=data['arrestee_home_city'].index,
-                       color=data['crime_code_desc'],
-                       animation_frame=data['year_of_arrest'],
-                       log_y=True,
-                       title='Relationship Between Offender Home City and Crime Types',
-                       labels={'arrestee_home_city': 'Offender Home City',
-                               'arrestee_race': 'Offender Race'})
-    return fig
-
-
-def city_race(data):
-    fig = px.histogram(data, x=data['arrestee_home_city'],
-                       y=data['arrestee_home_city'].index,
-                       color=data['arrestee_race'],
-                       animation_frame=data['year_of_arrest'],
-                       log_y=True,
-                       title='Relationship Between Offender Home City and Race',
-                       labels={'arrestee_home_city': 'Offender Home City', })
-    return fig
+def city_race():
+  fig = px.histogram(data, x = data['arrestee_home_city'],
+                     y = data['arrestee_home_city'].index,
+                     color = data['arrestee_race'],
+                     animation_frame=data['year_of_arrest'],
+                     log_y = True,
+                     title = 'Relationship Between Offender Home City and Race',
+                     labels = {'arrestee_home_city' : 'Offender Home City',})
+  return fig
 
 
 def preprocess(dataframe):
