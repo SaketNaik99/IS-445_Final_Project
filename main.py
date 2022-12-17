@@ -44,7 +44,7 @@ def case_res(data):
 # %%
 def arrest_types(data):
     """
-    This fucntion creates a plot of number of offenders of each arrest type descriptions over the years
+    This function creates a plot of number of offenders of each arrest type descriptions over the years
     :param data:
     :return:
     """
@@ -237,6 +237,7 @@ def city_sex(data):
                      title = 'Relationship Between Offender Home City and Sex',
                      labels = {'arrestee_home_city' : 'Offender Home City'})
   return fig
+
 
 
 def city_age(data):
