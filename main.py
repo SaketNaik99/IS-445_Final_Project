@@ -219,7 +219,7 @@ def get_data():
     return data
 
 
-def city_sex(data):
+def city_sex():
   data['year_of_arrest'] = data['year_of_arrest'].astype('int32')
   data['month_of_arrest'] = pd.to_datetime(data['month_of_arrest'], format='%m')
   data['date_of_arrest'] = pd.to_datetime(data['date_of_arrest'])
@@ -234,19 +234,20 @@ def city_sex(data):
   return fig
 
 
-def city_age(data):
-    data['age_at_arrest'] = data['age_at_arrest'].astype(float)
-    bins= [0,13,20,50,110]
-    labels = ['Kid','Teen','Adult','Elder']
-    data['AgeGroup'] = pd.cut(data['age_at_arrest'], bins=bins, labels=labels, right=False)
-    fig = px.histogram(data, x = data['arrestee_home_city'],
-                     y = data['arrestee_home_city'].index,
-                     color = data['AgeGroup'],
-                     animation_frame=data['year_of_arrest'],
+def city_age():
+  data_age = data.dropna()
+  data_age['age_at_arrest'] = data_age['age_at_arrest'].astype(float)
+  bins= [0,13,20,50,110]
+  labels = ['Kid','Teen','Adult','Elder']
+  data_age['AgeGroup'] = pd.cut(data_age['age_at_arrest'], bins=bins, labels=labels, right=False)
+  fig = px.histogram(data_age, x = data_age['arrestee_home_city'],
+                     y = data_age['arrestee_home_city'].index,
+                     color = data_age['AgeGroup'],
+                     animation_frame=data_age['year_of_arrest'],
                      log_y = True,
                      title = 'Relationship Between Offender Home City and Age',
                      labels = {'arrestee_home_city' : 'Offender Home City'})
-    return fig
+  return fig
 
 
 def city_crime_type(data):
