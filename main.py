@@ -129,8 +129,13 @@ def plot_fig2(data):
 
 
 def plot_fig1(data):
-    data_1 = data.groupby(['crime_code_desc', 'age_group'])['arrest_code'].count().to_frame('no_of_arrests'). \
-        reset_index()
+    data['year_of_arrest'] = pd.to_numeric(data['year_of_arrest'])
+    data['month_of_arrest'] = pd.to_numeric(data['month_of_arrest'])
+    data ['age_group'] = pd.cut(x = data['age_at_arrest'], bins=[0,17, 55, 99],
+                     labels=['Minor', 'Adult',
+                             'Elderly'])
+    data['age_at_arrest'] = pd.to_numeric(data['age_at_arrest'])
+    data_1 = data.groupby(['crime_code_desc', 'age_group'])['arrest_code'].count().to_frame('no_of_arrests').reset_index()
     fig = px.bar(data_1, x="crime_code_desc", y="no_of_arrests", color='age_group')
     return fig
 
