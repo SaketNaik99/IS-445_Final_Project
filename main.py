@@ -141,6 +141,10 @@ def plot_fig1(data):
 
 
 def get_data():
+    """
+
+    :return:
+    """
     response = requests.get('https://data.urbanaillinois.us/resource/afbd-8beq.json?$limit=50000').json()
     arrest_code = []
     incident_number = []
@@ -211,7 +215,6 @@ def get_data():
         arrest_res.append(i['arrest_resolution'])
 
         d = {'arrest_code': arrest_code, 'incident_number': incident_number, 'date_of_arrest': date_of_arrest,
-             'year_of_arrest': year_of_arrest,
              'year_of_arrest': year_of_arrest, 'month_of_arrest': month_of_arrest,
              'arrest_type_descp': arrest_type_descp, 'crime_code': crime_code,
              'crime_code_desc': crime_code_desc, 'violation': violation, 'disposition_code': disposition_code,
@@ -224,7 +227,7 @@ def get_data():
     return data
 
 
-def city_sex():
+def city_sex(data):
   data['year_of_arrest'] = data['year_of_arrest'].astype('int32')
   data['month_of_arrest'] = pd.to_datetime(data['month_of_arrest'], format='%m')
   data['date_of_arrest'] = pd.to_datetime(data['date_of_arrest'])
@@ -239,7 +242,7 @@ def city_sex():
   return fig
 
 
-def city_age():
+def city_age(data):
   data_age = data.dropna()
   data_age['age_at_arrest'] = data_age['age_at_arrest'].astype(float)
   bins= [0,13,20,50,110]
@@ -301,7 +304,6 @@ def age_crimetype(dataframe):
     age_crimetype_df = pd.DataFrame(age_crimetype_df.groupby("crime_code_desc")["age_at_arrest"].mean())
     age_crimetype_df.reset_index(inplace=True)
     age_crimetype_df = age_crimetype_df[age_crimetype_df["crime_code_desc"] != "."]
-    age_crimetype_df
     age_crimetype_df.sort_values(by="age_at_arrest", ascending=True, inplace=True)
     age_crimetype_df["age_at_arrest"] = age_crimetype_df["age_at_arrest"].astype("int")
 
@@ -413,17 +415,17 @@ def dash_layout():
             html.H1(id='H1', children='Crimes Commited by Different Age Groups', style={'textAlign': 'center',
                                                                                         'marginTop': 40,
                                                                                         'marginBottom': 40}),
-            dcc.Graph(id='bar_chart', figure=plot_fig1(), style={'width': 1500, 'height': 1000})
+            dcc.Graph(id='bar_chart', figure=plot_fig1(data), style={'width': 1500, 'height': 1000})
         ]),
         ([
             html.H1(id='H2', children='Punishment for Crime Commited', style={'textAlign': 'center',
                                                                               'marginTop': 40, 'marginBottom': 40}),
-            dcc.Graph(id='bar_chart', figure=plot_fig2(), style={'width': 1500, 'height': 1000})
+            dcc.Graph(id='bar_chart', figure=plot_fig2(data), style={'width': 1500, 'height': 1000})
         ]),
         ([
             html.H1(id='H3', children='Method of Arresting the Suspect', style={'textAlign': 'center',
                                                                                 'marginTop': 40, 'marginBottom': 40}),
-            dcc.Graph(id='bar_chart', figure=plot_fig3(), style={'width': 1500, 'height': 1000})
+            dcc.Graph(id='bar_chart', figure=plot_fig3(data), style={'width': 1500, 'height': 1000})
         ]),
         ([
             html.H1(id='H3', children='Relationship Between Offender Home City and Sex', style={'textAlign': 'center',
