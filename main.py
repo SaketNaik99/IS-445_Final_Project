@@ -141,10 +141,6 @@ def plot_fig1(data):
 
 
 def get_data():
-    """
-
-    :return:
-    """
     response = requests.get('https://data.urbanaillinois.us/resource/afbd-8beq.json?$limit=50000').json()
     arrest_code = []
     incident_number = []
@@ -215,6 +211,7 @@ def get_data():
         arrest_res.append(i['arrest_resolution'])
 
         d = {'arrest_code': arrest_code, 'incident_number': incident_number, 'date_of_arrest': date_of_arrest,
+             'year_of_arrest': year_of_arrest,
              'year_of_arrest': year_of_arrest, 'month_of_arrest': month_of_arrest,
              'arrest_type_descp': arrest_type_descp, 'crime_code': crime_code,
              'crime_code_desc': crime_code_desc, 'violation': violation, 'disposition_code': disposition_code,
@@ -304,6 +301,7 @@ def age_crimetype(dataframe):
     age_crimetype_df = pd.DataFrame(age_crimetype_df.groupby("crime_code_desc")["age_at_arrest"].mean())
     age_crimetype_df.reset_index(inplace=True)
     age_crimetype_df = age_crimetype_df[age_crimetype_df["crime_code_desc"] != "."]
+    age_crimetype_df
     age_crimetype_df.sort_values(by="age_at_arrest", ascending=True, inplace=True)
     age_crimetype_df["age_at_arrest"] = age_crimetype_df["age_at_arrest"].astype("int")
 
