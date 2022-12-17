@@ -9,6 +9,11 @@ app = dash.Dash()
 
 
 def yearwise_arrests(data):
+    """
+    This function creates a plot of arrests made over the years
+    :param data:
+    :return:
+    """
     yearwise_stats_count = data.groupby('year_of_arrest')[['arrest_code']].count()
     yearwise_stats_count.reset_index(inplace=True)
     fig = px.line(yearwise_stats_count,
@@ -20,6 +25,11 @@ def yearwise_arrests(data):
 
 
 def case_res(data):
+    """
+    This function creates a plot of different arrest resolutions over the years
+    :param data:
+    :return:
+    """
     plot_df = data.groupby('arrest_res')[['arrest_code']].count()
     plot_df.reset_index(inplace=True)
     plot_data = data.merge(plot_df, left_on="arrest_res", right_on="arrest_res", suffixes=("_ungrouped", "_grouped"))
@@ -33,6 +43,11 @@ def case_res(data):
 
 # %%
 def arrest_types(data):
+    """
+    This fucntion creates a plot of number of offenders of each arrest type descriptions over the years
+    :param data:
+    :return:
+    """
     plot_df = data.groupby('arrest_type_descp')[['arrest_code']].count()
     plot_df.reset_index(inplace=True)
     plot_data = data.merge(plot_df, left_on="arrest_type_descp", right_on="arrest_type_descp",
@@ -42,7 +57,7 @@ def arrest_types(data):
     return fig
 
 
-def age_plot(df, clause):
+def age_plot(data, clause):
   """Plotting monthly average age at arrest"""
   data['age_at_arrest'] = data['age_at_arrest'].astype(float)
   yearwise_ageofarrests = data.groupby('year_of_arrest')['age_at_arrest'].mean().reset_index(name = 'Average Arrest Age')
@@ -204,7 +219,7 @@ def get_data():
     return data
 
 
-def city_sex():
+def city_sex(data):
   data['year_of_arrest'] = data['year_of_arrest'].astype('int32')
   data['month_of_arrest'] = pd.to_datetime(data['month_of_arrest'], format='%m')
   data['date_of_arrest'] = pd.to_datetime(data['date_of_arrest'])
@@ -219,21 +234,22 @@ def city_sex():
   return fig
 
 
-def city_age():
-  data['age_at_arrest'] = data['age_at_arrest'].astype(float)
-  bins= [0,13,20,50,110]
-  labels = ['Kid','Teen','Adult','Elder']
-  data['AgeGroup'] = pd.cut(data['age_at_arrest'], bins=bins, labels=labels, right=False)
-  fig = px.histogram(data, x = data['arrestee_home_city'],
+def city_age(data):
+    data['age_at_arrest'] = data['age_at_arrest'].astype(float)
+    bins= [0,13,20,50,110]
+    labels = ['Kid','Teen','Adult','Elder']
+    data['AgeGroup'] = pd.cut(data['age_at_arrest'], bins=bins, labels=labels, right=False)
+    fig = px.histogram(data, x = data['arrestee_home_city'],
                      y = data['arrestee_home_city'].index,
                      color = data['AgeGroup'],
                      animation_frame=data['year_of_arrest'],
                      log_y = True,
                      title = 'Relationship Between Offender Home City and Age',
                      labels = {'arrestee_home_city' : 'Offender Home City'})
-  return fig
+    return fig
 
-def city_crime_type():
+
+def city_crime_type(data):
   fig = px.histogram(data, x = data['arrestee_home_city'],
                      y = data['arrestee_home_city'].index,
                      color = data['crime_code_desc'],
@@ -245,15 +261,15 @@ def city_crime_type():
   return fig
 
 
-def city_race():
-  fig = px.histogram(data, x = data['arrestee_home_city'],
+def city_race(data):
+    fig = px.histogram(data, x = data['arrestee_home_city'],
                      y = data['arrestee_home_city'].index,
                      color = data['arrestee_race'],
                      animation_frame=data['year_of_arrest'],
                      log_y = True,
                      title = 'Relationship Between Offender Home City and Race',
                      labels = {'arrestee_home_city' : 'Offender Home City',})
-  return fig
+    return fig
 
 
 def preprocess(dataframe):
@@ -329,7 +345,6 @@ def age_resolution(dataframe):
     return fig
 
 
-
 def dash_layout():
     data = get_data()
     app.layout = html.Div(children=
@@ -395,7 +410,7 @@ def dash_layout():
             dcc.Graph(id='bar_chart', figure=plot_fig1(), style={'width': 1500, 'height': 1000})
         ]),
         ([
-            html.H1(id='H2', children='Punshiment for Crime Commited', style={'textAlign': 'center',
+            html.H1(id='H2', children='Punishment for Crime Commited', style={'textAlign': 'center',
                                                                               'marginTop': 40, 'marginBottom': 40}),
             dcc.Graph(id='bar_chart', figure=plot_fig2(), style={'width': 1500, 'height': 1000})
         ]),
