@@ -43,58 +43,60 @@ def arrest_types(data):
 
 
 def age_plot(df, clause):
-    yearwise_ageofarrests = df.groupby(clause)[['age_at_arrest']].mean()
-    yearwise_ageofarrests.reset_index(inplace=True)
-    fig = px.line(yearwise_ageofarrests, x=clause, y="age_at_arrest")
-    return fig
+  """Plotting monthly average age at arrest"""
+  data['age_at_arrest'] = data['age_at_arrest'].astype(float)
+  yearwise_ageofarrests = data.groupby('year_of_arrest')['age_at_arrest'].mean().reset_index(name = 'Average Arrest Age')
+  fig = px.line(yearwise_ageofarrests, x='year_of_arrest', y='Average Arrest Age', title = 'Average Age at Arrest by Month')
+  return fig
 
 
 def monthly_arrests(data):
-    num_arrests = data.groupby('month_of_arrest').size().reset_index(name="number_of_arrests")
-    fig = px.bar(data_frame=num_arrests, x="month_of_arrest", y="number_of_arrests", barmode="group",
-                  category_orders={"month_of_arrest": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]})
-    return fig
+  """Plotting the monthly arrests by grouping by month and taking the count of arrests"""
+  num_arrests = data.groupby('month_of_arrest').size().reset_index(name="number_of_arrests")
+  fig = px.bar(data_frame=num_arrests, x="month_of_arrest", y="number_of_arrests", barmode="group",
+                category_orders={"month_of_arrest": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]})
+  return fig
 
-
-# Plotting 3 age groups by number of arrests
-def cat2_arrests(data):
-    bins = [0, 30, 50, 99]
-    group_names = ['<=30', '30-50', '50-99']
-    data['age_at_arrest_cat2'] = pd.cut(data['age_at_arrest'], bins, labels=group_names)
-    age_group_cat2 = data.groupby(['age_at_arrest_cat2', 'month_of_arrest']).size().reset_index(
-        name="number_of_arrests")
-    fig = px.bar(data_frame=age_group_cat2, x="age_at_arrest_cat2", y="number_of_arrests", barmode="group",
-                  title='Number of Arrests in each Age Group', animation_frame='month_of_arrest')
-    return fig
-
-
-# Plotting juvenile/non-juvenile age groups by number of arrests
 def cat1_arrests(data):
-    bins = [0.0, 18.0, 99.0]
-    group_names = ['juvenile', 'non-juvenile']
-    data['age_at_arrest_cat'] = pd.cut(data['age_at_arrest'], bins, labels=group_names)
-    age_group_juvenile = data.groupby(['age_at_arrest_cat', 'month_of_arrest']).size().reset_index(
-        name="number_of_arrests")
-    fig = px.bar(data_frame=age_group_juvenile, x="age_at_arrest_cat", y="number_of_arrests", barmode="group",
-                  title='Number of Juvenile/Non-Juvenile Arrests', animation_frame='month_of_arrest')
-    return fig
+  """Plotting the number of arrests by binning age into 2 categories"""
+  bins = [0.0, 18.0, 99.0]
+  group_names = ['juvenile', 'non-juvenile']
+  data['age_at_arrest_cat'] = pd.cut(data['age_at_arrest'].astype(float), bins, labels=group_names)
+  age_group_juvenile = data.groupby(['age_at_arrest_cat', 'month_of_arrest']).size().reset_index(name="number_of_arrests")
+  fig = px.bar(data_frame=age_group_juvenile, x="age_at_arrest_cat", y="number_of_arrests", barmode="group", 
+                title = 'Number of Juvenile/Non-Juvenile Arrests', animation_frame = 'month_of_arrest')
+  return fig
+
+def cat2_arrests(data):
+  """Plotting the number of arrests by binning age into 3 categories"""
+  data['age_at_arrest'] = data['age_at_arrest'].astype('float')
+  bins = [0, 30, 50, 99]
+  group_names = ['<=30', '30-50', '50-99']
+  data['age_at_arrest_cat2'] = pd.cut(data['age_at_arrest'], bins, labels=group_names)
+  age_group_cat2 = data.groupby(['age_at_arrest_cat2', 'month_of_arrest']).size().reset_index(
+      name="number_of_arrests")
+  fig = px.bar(data_frame=age_group_cat2, x="age_at_arrest_cat2", y="number_of_arrests", barmode="group",
+                title='Number of Arrests in each Age Group', animation_frame='month_of_arrest')
+  return fig
 
 
 def arrests_by_sex(data):
-    data_plot = data.loc[data['arrestee_sex'].isin(['MALE', 'FEMALE'])]
-    age_group_sex = data_plot.groupby(['arrestee_sex', 'month_of_arrest']).size().reset_index(name="number_of_arrests")
-    fig = px.bar(data_frame=age_group_sex, x="arrestee_sex", y="number_of_arrests", barmode="group",
-                  title='Number of Arrests by sex', animation_frame='month_of_arrest')
-    return fig
+  """Plotting the number of arrests by sex"""
+  data_plot = data.loc[data['arrestee_sex'].isin(['MALE', 'FEMALE'])]
+  age_group_sex = data_plot.groupby(['arrestee_sex', 'month_of_arrest']).size().reset_index(name="number_of_arrests")
+  fig = px.bar(data_frame=age_group_sex, x="arrestee_sex", y="number_of_arrests", barmode="group",
+                title='Number of Arrests by sex', animation_frame='month_of_arrest')
+  return fig
 
 
 def arrests_by_race(data):
-    data_plot = data.loc[~data['arrestee_race'].isin(['MALE', 'FEMALE'])]
-    age_group_race = data_plot.groupby(['arrestee_race', 'month_of_arrest']).size().reset_index(
-        name="number_of_arrests")
-    fig = px.bar(data_frame=age_group_race, x="arrestee_race", y="number_of_arrests", barmode="group",
-                  title='Number of Arrests by race', animation_frame='month_of_arrest')
-    return fig
+  """Plotting the number of arrests by race"""
+  data_plot = data.loc[~data['arrestee_race'].isin(['MALE', 'FEMALE'])]
+  age_group_race = data_plot.groupby(['arrestee_race', 'month_of_arrest']).size().reset_index(
+      name="number_of_arrests")
+  fig = px.bar(data_frame=age_group_race, x="arrestee_race", y="number_of_arrests", barmode="group",
+                title='Number of Arrests by race', animation_frame='month_of_arrest')
+  return fig
 
 
 def plot_fig3(data):
